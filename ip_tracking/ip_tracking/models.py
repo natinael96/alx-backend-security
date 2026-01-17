@@ -36,3 +36,20 @@ class RequestLog(models.Model):
     def __str__(self):
         return f"{self.ip_address} - {self.path} - {self.timestamp}"
 
+
+class SuspiciousIP(models.Model):
+    """
+    Model to store suspicious IP addresses flagged by anomaly detection.
+    """
+    ip_address = models.GenericIPAddressField(unique=True)
+    reason = models.CharField(max_length=255)
+    detected_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Suspicious IP'
+        verbose_name_plural = 'Suspicious IPs'
+        ordering = ['-detected_at']
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.reason}"
+

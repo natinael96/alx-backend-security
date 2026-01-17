@@ -1,3 +1,6 @@
 django-ipgeolocation
 requests
+django-ratelimit
+celery
+redis
 
