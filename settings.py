@@ -19,7 +19,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # IP Logging Middleware - Add this line
-    'ip_tracking.middleware.IPLoggingMiddleware',
+    'ip_tracking.ip_tracking.middleware.IPLoggingMiddleware',
 ]
 
 # Make sure 'ip_tracking' is in your INSTALLED_APPS
