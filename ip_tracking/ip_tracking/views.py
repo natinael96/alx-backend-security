@@ -7,8 +7,27 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 
-@ratelimit(key='ip', rate='5/m', method='POST', block=True)
-@ratelimit(key='user', rate='10/m', method='POST', block=True)
+def get_rate_limit_key(request):
+    """
+    Custom key function for rate limiting.
+    Returns 'user' key for authenticated users, 'ip' key for anonymous users.
+    """
+    if request.user.is_authenticated:
+        return f"user:{request.user.id}"
+    return f"ip:{request.META.get('REMOTE_ADDR', 'unknown')}"
+
+
+def get_rate_limit_rate(request):
+    """
+    Custom rate function for rate limiting.
+    Returns '10/m' for authenticated users, '5/m' for anonymous users.
+    """
+    if request.user.is_authenticated:
+        return '10/m'
+    return '5/m'
+
+
+@ratelimit(key=get_rate_limit_key, rate=get_rate_limit_rate, method='POST', block=True)
 @require_http_methods(["GET", "POST"])
 def login_view(request):
     """
@@ -35,8 +54,7 @@ class LoginView(View):
     """
     Class-based login view with rate limiting.
     """
-    @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True))
-    @method_decorator(ratelimit(key='user', rate='10/m', method='POST', block=True))
+    @method_decorator(ratelimit(key=get_rate_limit_key, rate=get_rate_limit_rate, method='POST', block=True))
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
